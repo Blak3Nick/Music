@@ -1,5 +1,9 @@
 package nick.model;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
 public class DataSource {
     public static final String DB_NAME = "music.db";
 
@@ -18,5 +22,32 @@ public class DataSource {
     public static final String COLUMN_SONG_TRACK = "track";
     public static final String COLUMN_SONG_TITLE = "title";
     public static final String COLUMN_SONG_ALBUM = "album";
+
+    private Connection conn;
+
+    public boolean open() {
+        try {
+            conn = DriverManager.getConnection(CONNECTION_STRING);
+            System.out.println("Connection is open.");
+            return true;
+
+        } catch (SQLException e) {
+            System.out.println("Couldn't connect to the database: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public void close() {
+        try {
+            if(conn != null) {
+                conn.close();
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Couldn't close the damn connection: " + e.getMessage());
+        }
+    }
+
 
 }
