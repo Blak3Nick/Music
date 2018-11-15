@@ -1,8 +1,8 @@
 package nick.model;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DataSource {
     public static final String DB_NAME = "music.db";
@@ -47,6 +47,44 @@ public class DataSource {
         } catch (SQLException e) {
             System.out.println("Couldn't close the damn connection: " + e.getMessage());
         }
+    }
+    public List<Artist> queryArtist() {
+        Statement statement = null;
+        ResultSet results = null;
+
+        try {
+            statement = conn.createStatement();
+            results = statement.executeQuery("SELECT * FROM " + TABLE_ARTISTS);
+
+            List<Artist> artists = new ArrayList<>();
+            while (results.next()) {
+                Artist artist = new Artist();
+                artist.setId(results.getInt(COLUMN_ARTIST_ID));
+                artist.setName(results.getString(COLUMN_ARTIST_NAME));
+                artists.add(artist);
+            }
+
+            return artists;
+        } catch (SQLException e) {
+            System.out.println("Query failed: " + e.getMessage());
+        } finally {
+            try {
+                if (results != null) {
+                    results.close();
+                }
+            } catch (SQLException e) {
+                //do nothing
+            }
+
+
+             try {
+                 if(statement != null) {
+                     statement.close();
+                 }
+             } catch (SQLException e) {
+                 //do nothing
+             }
+        }// end finally block
     }
 
 
