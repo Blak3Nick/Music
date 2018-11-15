@@ -13,7 +13,7 @@ public class Main {
             System.out.println("Couldn't connect to the database");
             return;
         }
-        List<Artist> artists = dataSource.queryArtist();
+        List<Artist> artists = dataSource.queryArtist(1);
         if (artists == null) {
             System.out.println("no artists");
             return;

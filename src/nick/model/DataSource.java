@@ -1,5 +1,7 @@
 package nick.model;
 
+import sun.security.provider.PolicySpiFile;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +36,12 @@ public class DataSource {
     public static final int INDEX_SONG_TITLE = 3;
     public static final int INDEX_SONG_ALBUM = 4;
 
+    public static final int ORDER_BY_NONE = 1;
+    public static final int ORDER_BY_ASC = 2;
+    public static final int ORDER_BY_DESC = 3;
+
+
+
     private Connection conn;
 
     public boolean open() {
@@ -59,14 +67,29 @@ public class DataSource {
             System.out.println("Couldn't close the damn connection: " + e.getMessage());
         }
     }
-    public List<Artist> queryArtist() {
+    public List<Artist> queryArtist(int sortOrder) {
+
+        StringBuilder sb = new StringBuilder("SELECT * FROM ");
+        sb.append(TABLE_ARTISTS);
+        if (sortOrder!= ORDER_BY_NONE) {
+            sb.append(" ORDER BY ");
+            sb.append(COLUMN_ARTIST_NAME);
+            sb.append(" COLLATE NOCASE ");
+            if (sortOrder == ORDER_BY_DESC) {
+                sb.append("DESC");
+            }
+            else {
+                sb.append("ASC");
+            }
+        }
 
         try(Statement statement = conn.createStatement();
-            ResultSet results = statement.executeQuery("SELECT * FROM " + TABLE_ARTISTS)) {
+            ResultSet results = statement.executeQuery(sb.toString())) {
 
             List<Artist> artists = new ArrayList<>();
             while (results.next()) {
                 Artist artist = new Artist();
+                // using the column position rather than the column name which requires string matching
                 artist.setId(results.getInt(INDEX_ARTIST_ID));
                 artist.setName(results.getString(INDEX_ALBUM_NAME));
                 artists.add(artist);
