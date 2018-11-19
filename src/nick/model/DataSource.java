@@ -111,6 +111,7 @@ public class DataSource {
         sb.append(" FROM ");
         sb.append(TABLE_ALBUMS);
         sb.append(" INNER JOIN ");
+        sb.append(TABLE_ARTISTS);
         sb.append(" ON ");
         sb.append(TABLE_ALBUMS);
         sb.append('.');
